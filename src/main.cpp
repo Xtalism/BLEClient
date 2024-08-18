@@ -16,7 +16,6 @@ static BLEAddress *pServerAddress;
 BLEClient* pClient = nullptr;
 BLERemoteCharacteristic* pRemoteCharacteristic = nullptr;
 
-// Set PWM channel
 const int pwmChannel = 0;
 const int freq = 5000;        // 5 kHz
 const int resolution = 8;     // 8 bits (0-255)
@@ -34,7 +33,7 @@ bool connectToServer(BLEAddress pAddress) {
 
   BLERemoteService* pRemoteService = pClient->getService(potServiceUUID);
   if (pRemoteService == nullptr) {
-    Serial.print("Failed to find our service UUID: ");
+    Serial.print("Failed to find our client service UUID: ");
     Serial.println(potServiceUUID.toString().c_str());
     pClient->disconnect();
     return false;
@@ -42,7 +41,7 @@ bool connectToServer(BLEAddress pAddress) {
 
   pRemoteCharacteristic = pRemoteService->getCharacteristic(pwmCharacteristicUUID);
   if (pRemoteCharacteristic == nullptr) {
-    Serial.print("Failed to find our characteristic UUID: ");
+    Serial.print("Failed to find our PWM characteristic UUID: ");
     Serial.println(pwmCharacteristicUUID.toString().c_str());
     pClient->disconnect();
     return false;
@@ -50,7 +49,10 @@ bool connectToServer(BLEAddress pAddress) {
 
   Serial.println("Found characteristic UUID!");
 
-  // Enable notifications
+  // Send MAC address to the server
+  std::string macAddress = BLEDevice::getAddress().toString();
+  pRemoteCharacteristic->writeValue(macAddress);
+
   pRemoteCharacteristic->registerForNotify([](BLERemoteCharacteristic* pRemoteCharacteristic, uint8_t* pData, size_t length, bool isNotify) {
     uint32_t pwmValue = pData[0];  // Assuming the value is sent as a single byte
 
@@ -80,7 +82,6 @@ void setup() {
 
   BLEDevice::init("");
 
-  // Set up LED PWM
   ledcSetup(pwmChannel, freq, resolution); 
   ledcAttachPin(LED_PIN, pwmChannel);    
 
