@@ -72,6 +72,10 @@ class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
       pServerAddress = new BLEAddress(advertisedDevice.getAddress());
       doConnect = true;
       Serial.println("Device found. Connecting!");
+
+      // int rssi = advertisedDevice.getRSSI();
+      // Serial.print("RSSI: ");
+      // Serial.println(rssi);
     }
   }
 };
@@ -94,6 +98,12 @@ void setup() {
 void loop() {
   if (doConnect) {
     if (connectToServer(*pServerAddress)) {
+      while (doConnect) {
+        int rssi = pClient->getRssi();
+        Serial.print("RSSI: ");
+        Serial.println(rssi);
+        delay(1000);
+      }
       Serial.println("We are now connected to the BLE Server");
       connected = true;
     } else {
