@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "BLEDevice.h"
 
-#define bleServerName "MANUEL_ESP32"
+#define bleServerName "NAME"
 #define LED_PIN 16  
 #define SERVICE_UUID "91bad492-b950-4226-aa2b-4ede9fa42f59"
 #define CHARACTERISTIC_UUID "ec0e8b64-33ae-11ec-8d3d-0242ac130003" // Unique ID for the characteristic
